@@ -1,9 +1,9 @@
-﻿using Civir.Application.Exceptions;
+﻿using Civir.Auth.Application.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 
-namespace Civir.Application.Beheaviours;
+namespace Civir.Auth.Application.Beheaviours;
 
 public class UnhandledExceptionBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>

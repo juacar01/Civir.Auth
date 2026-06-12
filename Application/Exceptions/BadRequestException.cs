@@ -1,4 +1,4 @@
-﻿namespace Civir.Application.Exceptions;
+﻿namespace Civir.Auth.Application.Exceptions;
 
 public class BadRequestException 
     : ApplicationException

@@ -1,7 +1,7 @@
 using AutoMapper;
 using Civir.Domain;
 
-namespace Civir.Application.Mappings;
+namespace Civir.Auth.Application.Mappings;
 
 public class MappingProfile : Profile
 {
