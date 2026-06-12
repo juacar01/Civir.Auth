@@ -1,41 +1,97 @@
+using Civir.Infrastructure.Persistence;
+using Civir.Auth.Application.Middlewares;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Add cadena de conexion .
+builder.Services.AddDbContext<CivirDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(typeof(CivirDbContext).Assembly.FullName)));
+
+builder.Services.AddMediatR(cfg =>
+{
+    //cfg.RegisterServicesFromAssembly(typeof(GetAuthorListQueryHandler).Assembly);
+    //cfg.RegisterServicesFromAssembly(typeof(GetBookListQueryHandler).Assembly);
+}
+);
+
 // Add services to the container.
+
+
+builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "myAllowSpecificOrigins",
+                      policy =>
+                      {
+                          policy.WithOrigins("*")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
+
+builder.Services.AddSwaggerGen(c =>
+{ 
+    c.EnableAnnotations();
+});
+
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        //options.SwaggerEndpoint("/openapi/v1.json", "Mi API .NET 10");
+        options.DocumentTitle = "My API Explorer";
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+        options.InjectStylesheet("/swagger-ui/custom.css");
+       
+    });
+
 }
+
+
+
+
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
+//app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var service = scope.ServiceProvider;
+    var loggerFactory = service.GetRequiredService<ILoggerFactory>();
+
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<CivirDbContext>();
+        context.Database.Migrate();
+
+    }
+    catch (Exception ex)
+    {
+        var logger = loggerFactory.CreateLogger<Program>();
+        logger.LogError(ex, "Ocurrio un error durante la migracion de la base de datos");
+    }
+}
+
+app.UseCors("myAllowSpecificOrigins");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
