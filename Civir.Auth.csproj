@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Civir.Domain\Civir.Domain.csproj" />
     <ProjectReference Include="..\Civir.Infrastructure\Civir.Infrastructure.csproj" />
+    <ProjectReference Include="..\Civir.Utils\Civir.Utils.csproj" />
   </ItemGroup>
 
 </Project>
