@@ -1,0 +1,80 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider files
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+*.nuget.props
+*.nuget.targets
+
+# Package restore
+packages/
+
+# Logs
+*.log
+
+# Dotnet publish
+publish/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+*.orig
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Rider and ReSharper
+_ReSharper*
+*.DotSettings.user
+
+# Generated files
+**/Generated
+auto-generated*
+
+# Visual Studio Code
+.vscode/
+
+# User-specific files
+*.user
+*.userprefs
+
+# JetBrains Rider
+.idea/
+
+# config files
+*.ide
+
+# Others
+*.vspscc
+*.vssscc
+
+# Prevent NuGet package folders from being committed
+**/packages/
+
+# .NET Core
+appsettings.Development.json
+
+# Test result files
+TestResults/
+*.trx
+
+# Azure DevOps
+.vs-test/
