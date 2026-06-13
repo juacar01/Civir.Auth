@@ -1,31 +1,43 @@
 using Civir.Auth.Application.Features.Register;
-using MediatR;
+using Civir.Auth.Application.Features.Register.Commands;
+using Civir.Auth.Application.Features.Users;
+using Civir.Auth.Application.Features.Users.Queries;
+using Civir.Utils.Cqrs;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 
-namespace Biblioteca.Api.Controllers;
+namespace Civir.Auth.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
 public class RegisterController : ControllerBase
 {
-    private IMediator _mediator;
+    private readonly IRegisterService _registerService;
+    private readonly IUserService _userService;
 
-    public RegisterController(IMediator mediator)
+    public RegisterController(IRegisterService registerService, IUserService userService)
     {
-        _mediator = mediator;
+        _registerService = registerService;
+        _userService = userService;
     }
 
-    [HttpPost("create", Name = "CreateAuthor")]
+    [HttpPost("register", Name = "CreateRegister")]
     [SwaggerOperation(
         Summary = "Registra los datos de un nuevo Autor",
         Description = "Registra los datos de un Nuevo Autor"
     )]
     [ProducesResponseType(typeof(RegisterVm), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<RegisterVm>> CreateAuthor([FromBody] CreateAuthorCommand request)
+    public async Task<ActionResult<RegisterVm>> CreateRegister([FromBody] RegisterVm request)
     {
-        var author = await _mediator.Send(request);
+
+        var user = await _userService.GetUserByEmailAsync(request.Email, CancellationToken.None);
+        if (user != null)
+        {
+            return BadRequest("El correo electrónico ya está registrado.");
+        }
+        
+        var author = await _registerService.RegisterAsync(request, CancellationToken.None);
         return Ok(author);
     }
 

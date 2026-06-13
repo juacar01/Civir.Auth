@@ -1,27 +1,27 @@
+using Civir.Infrastructure;
 using Civir.Infrastructure.Persistence;
+using Civir.Auth.Application;
 using Civir.Auth.Application.Middlewares;
 using Microsoft.EntityFrameworkCore;
+using Civir.Utils.Security;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
+
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 
 // Add cadena de conexion .
 builder.Services.AddDbContext<CivirDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(typeof(CivirDbContext).Assembly.FullName)));
 
-builder.Services.AddMediatR(cfg =>
-{
-    //cfg.RegisterServicesFromAssembly(typeof(GetAuthorListQueryHandler).Assembly);
-    //cfg.RegisterServicesFromAssembly(typeof(GetBookListQueryHandler).Assembly);
-}
-);
-
 // Add services to the container.
 
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Using Swashbuckle for OpenAPI/Swagger
 
 
 builder.Services.AddCors(options =>
@@ -47,15 +47,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        //options.SwaggerEndpoint("/openapi/v1.json", "Mi API .NET 10");
         options.DocumentTitle = "My API Explorer";
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
         options.InjectStylesheet("/swagger-ui/custom.css");
-       
     });
 
 }

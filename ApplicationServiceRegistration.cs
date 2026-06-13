@@ -1,9 +1,10 @@
 using AutoMapper;
-using Civir.Auth.Application.Beheaviours;
+using Civir.Auth.Application.Features.Register;
+using Civir.Auth.Application.Features.Register.Commands;
+using Civir.Auth.Application.Features.Users;
+using Civir.Auth.Application.Features.Users.Queries;
 using Civir.Auth.Application.Mappings;
-using MediatR;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Civir.Utils.Cqrs;
 using Microsoft.Extensions.Logging.Abstractions;
 
 
@@ -24,8 +25,8 @@ public static class ApplicationServiceRegistration
         var mapper = mapperConfig.CreateMapper();
         services.AddSingleton(mapper);
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddScoped<IRegisterService, RegisterService>();
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Civir.Auth.Application.Features.Login;
 using Civir.Auth.Application.Features.Register;
+using Civir.Auth.Application.Features.Users;
 using Civir.Domain.Entities;
 
 namespace Civir.Auth.Application.Mappings;
@@ -12,8 +13,8 @@ public class MappingProfile : Profile
         // Aquí puedes configurar tus mapeos
         // CreateMap<Source, Destination>();
 
-        CreateMap<User, RegisterVm>();
-        CreateMap<User, LoginVm>();
+        CreateMap<User, RegisterVm>().ReverseMap();
+        CreateMap<User, UserVm>().ReverseMap();
 /*
         CreateMap<Author, AuthorVm>();
         CreateMap<Book, BookVm>();

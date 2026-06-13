@@ -1,8 +1,8 @@
-using MediatR;
+using Civir.Utils.Cqrs;
 
-namespace Civir.Auth.Application.Features.Register;
+namespace Civir.Auth.Application.Features.Register.Commands;
 
-public class CreateAuthorCommand: IRequest<RegisterVm>
+public class CreateRegisterCommand: IRequest<RegisterVm>
 {
 
     public string Nombre { get; set; } = null!;
